@@ -1,0 +1,9 @@
+.register__link {
+  display: flex;
+  text-decoration: none;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.2em;
+  margin: 15px auto 0;
+  padding: 0;
+}

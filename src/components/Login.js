@@ -1,13 +1,15 @@
+import Form from './Form';
+import { useState } from "react";
+
 export default function Login() {
+
+  const [loginSettings, setLoginSettings] = useState({
+    title: "Вход",
+    buttonText: "Войти"
+  });
   return (
     <div className="login">
-      
-      <form className="form">
-      <h1 className="login__title">Вход</h1>
-        <input className="form__input" placeholder="Email" />
-        <input className="form__input" placeholder="Пароль" />
-        <button className="form__button">Войти</button>
-      </form>
+      <Form title={loginSettings.title} buttonText={loginSettings.buttonText} />
     </div>
   )
 }

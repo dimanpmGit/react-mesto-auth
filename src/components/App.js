@@ -142,16 +142,16 @@ export default function App() {
       <div className="page">
         <div className="page__container">
             <Header />
-            {/*<Main cards={cards}
+            <Main cards={cards}
                   onEditAvatar={handleEditAvatarClick}
                   onEditProfile={handleEditProfileClick}
                   onAddPlace={handleAddPlaceClick}
                   onCardClick={handleCardClick}
                   onCardLike={handleCardLike}
                   onCardDelete={handleCardDelete}
-  />*/}
+            />
             <Routes>
-              <Route path="/" element={<Login />} />
+              <Route path="/sign-in" element={<Login />} />
               <Route path="/sign-up" element={<Register />} />
             </Routes>
             <Footer />

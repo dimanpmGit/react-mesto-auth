@@ -49,5 +49,9 @@
 @import url(./blocks/popup/__image-name/popup__image-name.css);
 @import url(./blocks/popup/_bg-color/popup_bg-color_image.css);
 @import url(./blocks/form/form.css);
+@import url(./blocks/form/__title/form__title.css);
 @import url(./blocks/form/__input/form__input.css);
 @import url(./blocks/form/__button/form__button.css);
+@import url(./blocks/login/login.css);
+@import url(./blocks/register/register.css);
+@import url(./blocks/register/__link/register__link.css);
