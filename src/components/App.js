@@ -142,23 +142,24 @@ export default function App() {
       <div className="page">
         <div className="page__container">
             <Header />
-            <Main cards={cards}
+            {/*<Main cards={cards}
                   onEditAvatar={handleEditAvatarClick}
                   onEditProfile={handleEditProfileClick}
                   onAddPlace={handleAddPlaceClick}
                   onCardClick={handleCardClick}
                   onCardLike={handleCardLike}
                   onCardDelete={handleCardDelete}
-            />
+  />*/}
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/sign-up" element={<Register />} />
+            </Routes>
             <Footer />
             <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
             <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
             <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
             <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
-          <Routes>
-            <Route path="/sign-in" element={<Login />} />
-            <Route path="/sign-up" element={<Register />} />
-          </Routes>
+
         </div>
       </div>
     </CurrentUserContext.Provider>
