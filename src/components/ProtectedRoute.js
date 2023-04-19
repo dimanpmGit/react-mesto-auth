@@ -7,6 +7,6 @@ export default function ProtectedRoute({ element: Component, ...props }) {
   const { pathname } = useLocation();
   
   return (
-    props.loggedIn ? <Component {...props} /> : <Navigate to="/sign-in" state={{ returnUrl: pathname }} replace />
+    props.loggedIn ? <Component {...props} /> : <Navigate to="/signin" state={{ returnUrl: pathname }} replace />
   )
 };

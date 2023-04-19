@@ -12,8 +12,50 @@ import AddPlacePopup from './AddPlacePopup';
 import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
+import InfoTooltip from './InfoTooltip';
+import okImage from '../images/ok.svg';
+import notOkImage from '../images/not-ok.svg';
 
-export default function App() {
+export const BASE_URL = 'https://auth.nomoreparties.co';
+
+export function register(email, password) {
+  return fetch(`${BASE_URL}/signup`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({password, email}),
+  })
+    .then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
+}
+
+export function authorize(email, password) {
+  return fetch(`${BASE_URL}/signin`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({password, email}),
+  })
+    .then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
+}
+
+export function getContent(token) {
+  return fetch(`${BASE_URL}/users/me`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  })
+    .then(res => res.json())
+    .then(data => data)
+};
+
+export function App() {
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
   // Хук открытия попапа аватарки
@@ -25,11 +67,15 @@ export default function App() {
   // Хук открытия попапа для добавления карточки
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
 
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+
   // Хук открытия полноразмерной картинки
   const [selectedCard, setSelectedCard] = useState({});
 
   // Стейт для определения, залогинен ли пользователь
   const [loggedIn, setLoggedIn] = useState(false);
+
+  const [isRegistered, setIsRegistered] = useState(false);
 
   // Стейт для установки емэйла пользователя
   const [email, setEmail] = useState("");
@@ -37,6 +83,11 @@ export default function App() {
   function handleLogin(email) {
     setLoggedIn(true);
     setEmail(email);
+  }
+
+  function handleRegister(value) {
+    setIsRegistered(value);
+    setIsInfoTooltipOpen(true);
   }
 
   useEffect(() => {
@@ -146,6 +197,7 @@ export default function App() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    setIsInfoTooltipOpen(false);
     setSelectedCard({});
   }
 
@@ -156,7 +208,7 @@ export default function App() {
             <Header email={email} />
             <Routes>
               <Route path="/signin" element={<Login handleLogin={handleLogin} />} />
-              <Route path="/signup" element={<Register />} />
+              <Route path="/signup" element={<Register handleRegister={handleRegister} />} />
               <Route path="/" element={loggedIn ? <Navigate to="/main" replace /> : <Navigate to="/signin" replace />} />
               <Route path="/main" element={
                 <ProtectedRoute 
@@ -178,6 +230,12 @@ export default function App() {
             <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
             <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
             <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
+            <InfoTooltip 
+              isOpen={isInfoTooltipOpen} 
+              onClose={closeAllPopups} 
+              titleText={isRegistered ? 'Вы успешно зарегистрировались!' : 'Что-то пошло не так! Попробуйте еще раз.'}
+              imgPath={isRegistered ? okImage : notOkImage}
+            />
         </div>
       </div>
     </CurrentUserContext.Provider>
