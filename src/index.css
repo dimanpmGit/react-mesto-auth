@@ -60,4 +60,5 @@
 @import url(./blocks/form/__button/form__button.css);
 @import url(./blocks/login/login.css);
 @import url(./blocks/register/register.css);
-@import url(./blocks/register/__link/register__link.css);
+@import url(./blocks/register/__signin/register__signin.css);
+@import url(./blocks/register/__signin-link/register__signin-link.css);

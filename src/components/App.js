@@ -34,8 +34,10 @@ export default function App() {
   // Стейт для установки емэйла пользователя
   const [email, setEmail] = useState("");
   
-  // Стейт для установки меню пользователя
-  const [menuItem, setMenuItem] = useState("Войти");
+  function handleLogin(email) {
+    setLoggedIn(true);
+    setEmail(email);
+  }
 
   useEffect(() => {
     Promise.all([api.getUserInfo(), api.getCardsData()])
@@ -140,10 +142,6 @@ export default function App() {
       });
   }
 
-  function handleSetEmail() {
-    setEmail("");
-  }
-
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -155,21 +153,24 @@ export default function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-            <Header email={email} menuItem={menuItem} />
+            <Header email={email} />
             <Routes>
-              <Route path="/sign-in" element={<Login handleSetEmail={handleSetEmail}/>} />
-              <Route path="/sign-up" element={<Register />} />
-              <Route path="/" element={loggedIn ? <Navigate to="/main" replace /> : <Navigate to="/sign-in" replace />} />
-              <Route path="/main" element={<ProtectedRoute element={Main}
-                cards={cards}
-                onEditAvatar={handleEditAvatarClick}
-                onEditProfile={handleEditProfileClick}
-                onAddPlace={handleAddPlaceClick}
-                onCardClick={handleCardClick}
-                onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete}
-                loggedIn={loggedIn}
-              />}
+              <Route path="/signin" element={<Login handleLogin={handleLogin} />} />
+              <Route path="/signup" element={<Register />} />
+              <Route path="/" element={loggedIn ? <Navigate to="/main" replace /> : <Navigate to="/signin" replace />} />
+              <Route path="/main" element={
+                <ProtectedRoute 
+                  element={Main}
+                  cards={cards}
+                  onEditAvatar={handleEditAvatarClick}
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onCardClick={handleCardClick}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                  loggedIn={loggedIn}
+                />
+              }
             />
             </Routes>
             <Footer />

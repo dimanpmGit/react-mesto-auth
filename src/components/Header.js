@@ -1,16 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import EmailLink from "./EmailLink";
 
 function Header(props) {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
   return (    
     <header className="header">
       <div className="logo"></div>
-      <nav className="header__nav-menu">
-        {props.email ? <EmailLink email={props.email}/> : ""}
-        <Link className="header__nav-link link" to="/">
-          {props.menuItem}
-        </Link>
-      </nav>
+      <ul className="header__nav-menu">
+        {pathname === '/' && <li><EmailLink email={props.email} /></li>}
+        {pathname === '/main' && <li><Link to="/signin" className="header__nav-link link">Войти</Link></li>}
+        {pathname === '/signin' && <li><Link to="/signup" className="header__nav-link link">Регистрация</Link></li>}
+        {pathname === '/signup' && <li><Link to="/signin" className="header__nav-link link">Войти</Link></li>}
+      </ul>
     </header>
   );
 }
