@@ -4,7 +4,7 @@ import InfoTooltip from "./InfoTooltip";
 import okImage from "../images/ok.svg";
 import notOkImage from "../images/not-ok.svg";
 
-export default function Login() {
+export default function Login(props) {
 
   const [loginSettings] = useState({
     title: "Вход",
@@ -12,6 +12,8 @@ export default function Login() {
     titleTextOk: "Вы успешно зарегистрировались!",
     titleTextNotOk: "Что-то пошло не так! Попробуйте еще раз."
   });
+
+  props.handleSetEmail();
   return (
     <div className="login">
       <Form title={loginSettings.title} buttonText={loginSettings.buttonText} />

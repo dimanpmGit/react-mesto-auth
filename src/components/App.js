@@ -28,7 +28,11 @@ export default function App() {
   // Хук открытия полноразмерной картинки
   const [selectedCard, setSelectedCard] = useState({});
 
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
+
+  const [email, setEmail] = useState("dimanpm@yandex.ru");
+
+  const [menuItem, setMenuItem] = useState("Войти");
 
   useEffect(() => {
     Promise.all([api.getUserInfo(), api.getCardsData()])
@@ -133,6 +137,10 @@ export default function App() {
       });
   }
 
+  function handleSetEmail() {
+    setEmail("");
+  }
+
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -144,7 +152,7 @@ export default function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-            <Header />
+            <Header email={email} menuItem={menuItem} />
             <Routes>
               {/*<Route path='/cards' element={
                 <Main cards={cards}
@@ -156,22 +164,23 @@ export default function App() {
                   onCardDelete={handleCardDelete}
                 />
               } />*/}
-              <Route path='/cards' element={<ProtectedRoute element={Main} 
-                  cards={cards}
-                  onEditAvatar={handleEditAvatarClick}
-                  onEditProfile={handleEditProfileClick}
-                  onAddPlace={handleAddPlaceClick}
-                  onCardClick={handleCardClick}
-                  onCardLike={handleCardLike}
-                  onCardDelete={handleCardDelete}
-                  loggedIn={loggedIn}
-                />}
-              />
-              <Route path="/sign-in" element={<Login />} />
+
+              <Route path="/sign-in" element={<Login handleSetEmail={handleSetEmail}/>} />
               <Route path="/sign-up" element={<Register />} />
-              <Route path="/" element={loggedIn ? <Navigate to="/cards" replace /> : <Navigate to="/sign-in" replace />} />
+              <Route path="/" element={loggedIn ? <Navigate to="/main" replace /> : <Navigate to="/sign-in" replace />} />
+              <Route path="/main" element={<ProtectedRoute element={Main}
+                cards={cards}
+                onEditAvatar={handleEditAvatarClick}
+                onEditProfile={handleEditProfileClick}
+                onAddPlace={handleAddPlaceClick}
+                onCardClick={handleCardClick}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDelete}
+                loggedIn={loggedIn}
+              />}
+            />
             </Routes>
-            {loggedIn && <Footer />}
+            {/*loggedIn && */<Footer />}
             <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
             <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
             <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
