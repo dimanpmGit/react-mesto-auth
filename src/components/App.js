@@ -28,10 +28,13 @@ export default function App() {
   // Хук открытия полноразмерной картинки
   const [selectedCard, setSelectedCard] = useState({});
 
-  const [loggedIn, setLoggedIn] = useState(true);
+  // Стейт для определения, залогинен ли пользователь
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  const [email, setEmail] = useState("dimanpm@yandex.ru");
-
+  // Стейт для установки емэйла пользователя
+  const [email, setEmail] = useState("");
+  
+  // Стейт для установки меню пользователя
   const [menuItem, setMenuItem] = useState("Войти");
 
   useEffect(() => {
@@ -154,17 +157,6 @@ export default function App() {
         <div className="page__container">
             <Header email={email} menuItem={menuItem} />
             <Routes>
-              {/*<Route path='/cards' element={
-                <Main cards={cards}
-                  onEditAvatar={handleEditAvatarClick}
-                  onEditProfile={handleEditProfileClick}
-                  onAddPlace={handleAddPlaceClick}
-                  onCardClick={handleCardClick}
-                  onCardLike={handleCardLike}
-                  onCardDelete={handleCardDelete}
-                />
-              } />*/}
-
               <Route path="/sign-in" element={<Login handleSetEmail={handleSetEmail}/>} />
               <Route path="/sign-up" element={<Register />} />
               <Route path="/" element={loggedIn ? <Navigate to="/main" replace /> : <Navigate to="/sign-in" replace />} />
@@ -180,7 +172,7 @@ export default function App() {
               />}
             />
             </Routes>
-            {/*loggedIn && */<Footer />}
+            <Footer />
             <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
             <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
             <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
