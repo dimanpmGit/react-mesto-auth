@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -15,45 +15,7 @@ import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
 import okImage from '../images/ok.svg';
 import notOkImage from '../images/not-ok.svg';
-
-export const BASE_URL = 'https://auth.nomoreparties.co';
-
-export function register(email, password) {
-  return fetch(`${BASE_URL}/signup`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({password, email}),
-  })
-    .then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
-}
-
-export function authorize(email, password) {
-  return fetch(`${BASE_URL}/signin`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({password, email}),
-  })
-    .then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
-}
-
-export function getContent(token) {
-  return fetch(`${BASE_URL}/users/me`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  })
-    .then(res => res.json())
-    .then(data => data)
-};
+import auth from '../utils/Auth';
 
 export function App() {
   const [currentUser, setCurrentUser] = useState({});
@@ -77,17 +39,17 @@ export function App() {
 
   const [isRegistered, setIsRegistered] = useState(false);
 
-  // Стейт для установки емэйла пользователя
-  const [email, setEmail] = useState("");
-  
-  function handleLogin(email) {
-    setLoggedIn(true);
-    setEmail(email);
-  }
+  const [formValues, setFormValues] = useState({
+    email: '',
+    password: '',
+  });
 
-  function handleRegister(value) {
-    setIsRegistered(value);
-    setIsInfoTooltipOpen(true);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  function handleLogin(user) {
+    setLoggedIn(true);
+    setFormValues(user);
   }
 
   useEffect(() => {
@@ -193,6 +155,70 @@ export function App() {
       });
   }
 
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value
+    });
+  }
+
+  function handleRegisterSubmit(e) {
+    e.preventDefault();
+    if (!formValues.password) {
+      setIsInfoTooltipOpen(true);
+      //setErrorMessage('Пароль не может быть пустым');
+      return;
+    }
+
+    auth.register(formValues.email, formValues.password)
+      .then(data => {
+        setIsRegistered(data);
+        setIsInfoTooltipOpen(true);
+        navigate('/signin');
+      })
+      .catch(err => {
+        setIsInfoTooltipOpen(true);
+        //setErrorMessage(err);
+      })
+  }
+
+  function handleLoginSubmit(e) {
+    e.preventDefault();
+
+    if (!formValues.password || !formValues.email) {
+      setIsInfoTooltipOpen(true);
+      //setErrorMessage('Email или пароль пуст');
+      return;
+    }
+
+    auth.authorize(formValues.email, formValues.password)
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          tokenCheck(data.token);
+          const url = location.state?.returnUrl || '/main';
+          navigate(url);
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  function tokenCheck() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return;
+    }
+
+    auth.getContent(token)
+      .then(res => {
+        handleLogin(res.data);
+        const url = location.state?.returnUrl || '/main';
+        navigate(url);
+      })
+      .catch(err => console.log(err));
+  }
+
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -205,10 +231,10 @@ export function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-            <Header email={email} />
+            <Header email={formValues.email} />
             <Routes>
-              <Route path="/signin" element={<Login handleLogin={handleLogin} />} />
-              <Route path="/signup" element={<Register handleRegister={handleRegister} />} />
+              <Route path="/signin" element={<Login handleChange={handleChange} handleSubmit={handleLoginSubmit} tokenCheck={tokenCheck} formValues={formValues} />} />
+              <Route path="/signup" element={<Register handleChange={handleChange} handleSubmit={handleRegisterSubmit} formValues={formValues} />} />
               <Route path="/" element={loggedIn ? <Navigate to="/main" replace /> : <Navigate to="/signin" replace />} />
               <Route path="/main" element={
                 <ProtectedRoute 

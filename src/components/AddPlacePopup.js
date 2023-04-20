@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import PopupWithForm from "./PopupWithForm";
+import { useForm } from "../hooks/useForm";
+
 export default function AddPlacePopup(props) {
   const [placeName, setPlaceName] = useState('');
   const [placeLink, setPlaceLink] = useState('');
+  
 
   // При открытии попапа очищаем поля ввода
   useEffect(() => {
