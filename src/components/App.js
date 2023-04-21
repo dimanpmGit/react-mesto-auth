@@ -53,6 +53,7 @@ export function App() {
   }
 
   useEffect(() => {
+    tokenCheck();
     Promise.all([api.getUserInfo(), api.getCardsData()])
     .then((data) => {
       setCurrentUser({
@@ -167,7 +168,6 @@ export function App() {
     e.preventDefault();
     if (!formValues.password) {
       setIsInfoTooltipOpen(true);
-      //setErrorMessage('Пароль не может быть пустым');
       return;
     }
 
@@ -179,7 +179,6 @@ export function App() {
       })
       .catch(err => {
         setIsInfoTooltipOpen(true);
-        //setErrorMessage(err);
       })
   }
 
@@ -188,7 +187,6 @@ export function App() {
 
     if (!formValues.password || !formValues.email) {
       setIsInfoTooltipOpen(true);
-      //setErrorMessage('Email или пароль пуст');
       return;
     }
 
@@ -233,7 +231,7 @@ export function App() {
         <div className="page__container">
             <Header email={formValues.email} />
             <Routes>
-              <Route path="/signin" element={<Login handleChange={handleChange} handleSubmit={handleLoginSubmit} tokenCheck={tokenCheck} formValues={formValues} />} />
+              <Route path="/signin" element={<Login handleChange={handleChange} handleSubmit={handleLoginSubmit} formValues={formValues} />} />
               <Route path="/signup" element={<Register handleChange={handleChange} handleSubmit={handleRegisterSubmit} formValues={formValues} />} />
               <Route path="/" element={loggedIn ? <Navigate to="/main" replace /> : <Navigate to="/signin" replace />} />
               <Route path="/main" element={

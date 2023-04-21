@@ -16,7 +16,7 @@ class Auth {
       },
       body: JSON.stringify({password, email}),
     })
-      .then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
+      .then(handleResponse)
   }
 
   authorize(email, password) {
@@ -28,7 +28,7 @@ class Auth {
       },
       body: JSON.stringify({password, email}),
     })
-      .then(res => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`));
+      .then(handleResponse)
   }
 
   getContent(token) {
@@ -40,8 +40,7 @@ class Auth {
         'Authorization': `Bearer ${token}`,
       },
     })
-      .then(res => res.json())
-      .then(data => data)
+      .then(handleResponse)
   };
 }
 
